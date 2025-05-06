@@ -7,10 +7,6 @@ from datetime import datetime
 import os
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 
-# Initialize session state for form submission
-if 'submitted' not in st.session_state:
-    st.session_state.submitted = False
-
 # Main app structure
 st.title("SvS Battle Registration")
 
@@ -75,11 +71,8 @@ with st.form("registration_form"):
         index=0
     )
     
-    # Only show submit button if form hasn't been submitted
-    if not st.session_state.submitted:
-        submitted = st.form_submit_button("Submit Registration")
-    else:
-        submitted = False
+    # Submit Button
+    submitted = st.form_submit_button("Submit Registration")
     
     if submitted:
         if not player_name:
@@ -104,12 +97,5 @@ with st.form("registration_form"):
                 sheet.append_row(new_row)
                 st.success("Registration submitted successfully!")
                 st.balloons()
-                st.session_state.submitted = True
             except Exception as e:
                 st.error(f"Failed to save data: {str(e)}")
-
-# Add a button to reset the form if needed
-if st.session_state.submitted:
-    if st.button("Submit another registration"):
-        st.session_state.submitted = False
-        st.experimental_rerun()
