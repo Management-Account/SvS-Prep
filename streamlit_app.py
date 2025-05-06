@@ -20,21 +20,10 @@ gc = gspread.authorize(credentials)
 # Open the specific Google Sheet
 sheet = gc.open_by_key(st.secrets["SHEET_ID"]).worksheet("SvS Battle Registration")
 
-# Get all existing registrations to check for duplicates
-def get_existing_registrations():
-    try:
-        records = sheet.get_all_records()
-        return [record['Enter your in-game name*'].strip().lower() for record in records if record.get('Enter your in-game name*')]
-    except Exception as e:
-        st.error(f"Error reading existing registrations: {str(e)}")
-        return []
-
-existing_names = get_existing_registrations()
-
 # Registration Form
 with st.form("registration_form"):
     # Player Information
-    player_name = st.text_input("Enter your in-game name*", key="player_name").strip()
+    player_name = st.text_input("Enter your in-game name*", key="player_name")
     
     # Alliance Selection
     alliance = st.selectbox(
@@ -88,8 +77,6 @@ with st.form("registration_form"):
     if submitted:
         if not player_name:
             st.error("Please enter your in-game name")
-        elif player_name.lower() in existing_names:
-            st.error("This in-game name has already registered. Please contact the organizer if this is a mistake.")
         else:
             # Prepare the data row
             timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -110,15 +97,5 @@ with st.form("registration_form"):
                 sheet.append_row(new_row)
                 st.success("Registration submitted successfully!")
                 st.balloons()
-                # Update the existing names list to prevent multiple submissions in the same session
-                existing_names.append(player_name.lower())
             except Exception as e:
                 st.error(f"Failed to save data: {str(e)}")
-
-# Display existing registrations (optional)
-if st.checkbox("Show current registrations"):
-    try:
-        registrations = sheet.get_all_records()
-        st.write(registrations)
-    except Exception as e:
-        st.error(f"Error displaying registrations: {str(e)}
