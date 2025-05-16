@@ -71,12 +71,6 @@ with st.form("registration_form"):
         index=0
     )
     
-    # Ministry Buff Selection (new field)
-    ministry_buff = st.multiselect(
-        "Which Ministry Buff do You want? (Select all that apply)",
-        ["Vice President", "Ministry of Education"]
-    )
-    
     # Submit Button
     submitted = st.form_submit_button("Submit Registration")
     
@@ -95,8 +89,7 @@ with st.form("registration_form"):
                 lancer_level,
                 marksman_level,
                 joining_from,
-                joining_to,
-                ", ".join(ministry_buff)  # Join multiple selections with comma
+                joining_to
             ]
             
             try:
