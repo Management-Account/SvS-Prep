@@ -8,7 +8,7 @@ import os
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 
 # Main app structure
-st.title("SFC Battle Registration")
+st.title("TCW Members")
 
 # Google Sheets connection setup
 credentials = service_account.Credentials.from_service_account_info(
