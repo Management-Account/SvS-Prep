@@ -18,7 +18,7 @@ credentials = service_account.Credentials.from_service_account_info(
 gc = gspread.authorize(credentials)
 
 # Open the specific Google Sheet
-sheet = gc.open_by_key(st.secrets["SHEET_ID"]).worksheet("Sheet1")
+sheet = gc.open_by_key(st.secrets["SHEET_ID"]).worksheet("DATA")
 
 # Registration Form
 with st.form("registration_form"):
