@@ -9,6 +9,7 @@ os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 
 # Main app structure
 st.title("TCW Members")
+st.subheader("Help us get to know you better!")
 
 # Google Sheets connection setup
 credentials = service_account.Credentials.from_service_account_info(
