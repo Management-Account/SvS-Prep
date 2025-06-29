@@ -23,7 +23,7 @@ sheet = gc.open_by_key(st.secrets["SHEET_ID"]).worksheet("DATA")
 # Registration Form
 with st.form("registration_form"):
     # In-game Name
-    in_game_name = st.text_input("In-game Name*")
+    ign = st.text_input("In-game Name*", max_chars=50)
     
     # Timezone Selection
     timezone = st.selectbox(
@@ -35,31 +35,34 @@ with st.form("registration_form"):
         index=12  # Default to UTC±0
     )
     
-    # Birthday Selection (Month and Day only)
+    # Birthday Selection
     birthday = st.date_input(
-        "What is Your Birthday? (Month and Day)*",
+        "What is Your Birthday?*",
         min_value=datetime(1900, 1, 1),
-        max_value=datetime.today(),
-        format="MM-DD"
+        max_value=datetime.today()
     )
     
     # Submit Button
     submitted = st.form_submit_button("Submit Registration")
     
     if submitted:
-        # Prepare the data row
-        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        new_row = [
-            timestamp,
-            in_game_name,
-            timezone,
-            birthday.strftime("%m-%d")  # Only month and day
-        ]
-        
-        try:
-            # Append the new row to the sheet
-            sheet.append_row(new_row)
-            st.success("Registration submitted successfully!")
-            st.balloons()
-        except Exception as e:
-            st.error(f"Failed to save data: {str(e)}")
+        # Validate required fields
+        if not ign:
+            st.error("Please enter your In-game Name")
+        else:
+            # Prepare the data row
+            timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            new_row = [
+                timestamp,
+                ign,
+                timezone,
+                birthday.strftime("%Y-%m-%d")
+            ]
+            
+            try:
+                # Append the new row to the sheet
+                sheet.append_row(new_row)
+                st.success("Registration submitted successfully!")
+                st.balloons()
+            except Exception as e:
+                st.error(f"Failed to save data: {str(e)}")
