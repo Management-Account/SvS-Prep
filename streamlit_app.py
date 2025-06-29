@@ -8,7 +8,7 @@ import os
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 
 # Main app structure
-st.title("TCW members")
+st.title("SFC Battle Registration")
 
 # Google Sheets connection setup
 credentials = service_account.Credentials.from_service_account_info(
@@ -18,10 +18,13 @@ credentials = service_account.Credentials.from_service_account_info(
 gc = gspread.authorize(credentials)
 
 # Open the specific Google Sheet
-sheet = gc.open_by_key(st.secrets["SHEET_ID"]).worksheet("DATA")
+sheet = gc.open_by_key(st.secrets["SHEET_ID"]).worksheet("SvS Battle Registration")
 
 # Registration Form
 with st.form("registration_form"):
+    # In-game Name
+    player_name = st.text_input("Enter your in-game name*", key="player_name")
+    
     # Timezone Selection
     timezone = st.selectbox(
         "What is Your Timezone?*",
@@ -32,29 +35,35 @@ with st.form("registration_form"):
         index=12  # Default to UTC±0
     )
     
-    # Birthday Selection
+    # Birthday Selection (Month and Day only)
+    today = datetime.today()
     birthday = st.date_input(
-        "What is Your Birthday?*",
+        "What is Your Birthday? (Month and Day only)*",
         min_value=datetime(1900, 1, 1),
-        max_value=datetime.today()
+        max_value=datetime(1900, 12, 31),  # Using 1900 as placeholder year
+        format="MM-DD"
     )
     
     # Submit Button
     submitted = st.form_submit_button("Submit Registration")
     
     if submitted:
-        # Prepare the data row
-        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        new_row = [
-            timestamp,
-            timezone,
-            birthday.strftime("%Y-%m-%d")
-        ]
-        
-        try:
-            # Append the new row to the sheet
-            sheet.append_row(new_row)
-            st.success("Registration submitted successfully!")
-            st.balloons()
-        except Exception as e:
-            st.error(f"Failed to save data: {str(e)}")
+        if not player_name:
+            st.error("Please enter your in-game name")
+        else:
+            # Prepare the data row
+            timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            new_row = [
+                timestamp,
+                player_name,
+                timezone,
+                birthday.strftime("%m-%d")  # Format as MM-DD
+            ]
+            
+            try:
+                # Append the new row to the sheet
+                sheet.append_row(new_row)
+                st.success("Registration submitted successfully!")
+                st.balloons()
+            except Exception as e:
+                st.error(f"Failed to save data: {str(e)}")
