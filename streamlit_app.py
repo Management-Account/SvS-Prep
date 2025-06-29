@@ -18,84 +18,43 @@ credentials = service_account.Credentials.from_service_account_info(
 gc = gspread.authorize(credentials)
 
 # Open the specific Google Sheet
-sheet = gc.open_by_key(st.secrets["SHEET_ID"]).worksheet("SvS Battle Registration")
+sheet = gc.open_by_key(st.secrets["SHEET_ID"]).worksheet("Sheet1")
 
 # Registration Form
 with st.form("registration_form"):
-    # Player Information
-    player_name = st.text_input("Enter your in-game name*", key="player_name")
-    
-    # Alliance Selection
-    alliance = st.selectbox(
-        "What is Your Alliance?*",
-        ["TCW", "MRA", "RFA", "SHR" , "mra" , "FOX"],
-        index=0
+    # Timezone Selection
+    timezone = st.selectbox(
+        "What is Your Timezone?*",
+        ["UTC-12", "UTC-11", "UTC-10", "UTC-9", "UTC-8", "UTC-7", "UTC-6", 
+         "UTC-5", "UTC-4", "UTC-3", "UTC-2", "UTC-1", "UTC±0", 
+         "UTC+1", "UTC+2", "UTC+3", "UTC+4", "UTC+5", "UTC+6", 
+         "UTC+7", "UTC+8", "UTC+9", "UTC+10", "UTC+11", "UTC+12"],
+        index=12  # Default to UTC±0
     )
     
-    # FC Level
-    fc_level = st.selectbox(
-        "What is Your FC level?*",
-        ["F29","F30", "FC1", "FC2", "FC3", "FC4", "FC5"],
-        index=0
-    )
-    
-    # Troop Levels
-    infantry_level = st.selectbox(
-        "What is your Infantry Troops level?*",
-        ["T10", "FC1", "FC2", "FC3", "FC4", "FC5"],
-        index=0
-    )
-    
-    lancer_level = st.selectbox(
-        "What is your Lancer Troops level?*",
-        ["T10", "FC1", "FC2", "FC3", "FC4", "FC5"],
-        index=0
-    )
-    
-    marksman_level = st.selectbox(
-        "What is your Marksman Troops level?*",
-        ["T10", "FC1", "FC2", "FC3", "FC4", "FC5"],
-        index=0
-    )
-    
-    # Availability Times
-    joining_from = st.selectbox(
-        "Joining FROM*",
-        ["12:00 UTC", "13:00 UTC", "14:00 UTC", "15:00 UTC", "16:00 UTC", "17:00 UTC"],
-        index=0
-    )
-    
-    joining_to = st.selectbox(
-        "TO*",
-        ["12:00 UTC", "13:00 UTC", "14:00 UTC", "15:00 UTC", "16:00 UTC", "17:00 UTC", "18:00 UTC"],
-        index=0
+    # Birthday Selection
+    birthday = st.date_input(
+        "What is Your Birthday?*",
+        min_value=datetime(1900, 1, 1),
+        max_value=datetime.today()
     )
     
     # Submit Button
     submitted = st.form_submit_button("Submit Registration")
     
     if submitted:
-        if not player_name:
-            st.error("Please enter your in-game name")
-        else:
-            # Prepare the data row
-            timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            new_row = [
-                timestamp,
-                player_name,
-                alliance,
-                fc_level,
-                infantry_level,
-                lancer_level,
-                marksman_level,
-                joining_from,
-                joining_to
-            ]
-            
-            try:
-                # Append the new row to the sheet
-                sheet.append_row(new_row)
-                st.success("Registration submitted successfully!")
-                st.balloons()
-            except Exception as e:
-                st.error(f"Failed to save data: {str(e)}")
+        # Prepare the data row
+        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        new_row = [
+            timestamp,
+            timezone,
+            birthday.strftime("%Y-%m-%d")
+        ]
+        
+        try:
+            # Append the new row to the sheet
+            sheet.append_row(new_row)
+            st.success("Registration submitted successfully!")
+            st.balloons()
+        except Exception as e:
+            st.error(f"Failed to save data: {str(e)}")
