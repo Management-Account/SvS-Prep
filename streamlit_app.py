@@ -35,11 +35,12 @@ with st.form("registration_form"):
         index=12  # Default to UTC±0
     )
     
-    # Birthday Selection
+    # Birthday Selection (fixed to year 2025)
     birthday = st.date_input(
-        "What is Your Birthday?*",
-        min_value=datetime(1900, 1, 1),
-        max_value=datetime.today()
+        "What is Your Birthday? (Year will be set to 2025)*",
+        min_value=datetime(2025, 1, 1),
+        max_value=datetime(2025, 12, 31),
+        value=datetime(2025, 1, 1)  # Default to Jan 1, 2025
     )
     
     # Submit Button
@@ -52,11 +53,13 @@ with st.form("registration_form"):
         else:
             # Prepare the data row
             timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            # Store the birthday with selected month/day but fixed year 2025
+            formatted_birthday = f"2025-{birthday.month:02d}-{birthday.day:02d}"
             new_row = [
                 timestamp,
                 ign,
                 timezone,
-                birthday.strftime("%Y-%m-%d")
+                formatted_birthday
             ]
             
             try:
